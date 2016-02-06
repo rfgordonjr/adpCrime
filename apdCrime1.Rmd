@@ -36,4 +36,8 @@ describe(apdCrimeData)
 
 
 
+# Session Info
 
+```{r}
+sessionInfo()
+```
