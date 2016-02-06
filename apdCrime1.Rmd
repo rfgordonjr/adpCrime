@@ -1,0 +1,39 @@
+---
+title: "APD Crime Data"
+author: "Rob Gordon"
+date: '`r format(Sys.time(), "%b-%d-%Y")`'
+output: 
+  html_document: 
+    toc: yes
+---
+
+This page serves as a document to describe my analysis of the Atlanta Police Department's publicly released crime data. See http://www.atlantapd.org/crimedatadownloads.aspx for details.
+
+# Data
+
+We can read the data directly from the url.
+
+```{r}
+temp <- tempfile()
+download.file("http://www.atlantapd.org/pdf/crime-data-downloads/5B947EA3-05A2-45F3-AA10-1E58C5EFE20A.zip",temp)
+apdCrimeData <- read.csv(unz(temp, "COBRA020516.csv"), stringsAsFactors = FALSE)
+unlink(temp)
+```
+
+Let's look at the structure of the data set and some descriptive statistics. Looking at the structure of the data set, it looks like we have some work to do including but not limited to:
+
+- making sure we understand what each field is (with limited data description from apd web site)
+- converting certain fields from chr to date/time
+- determine how best to handle spatial data (lon/lat, shape files, etc)
+
+```{r, message=FALSE}
+options(width=120)
+names(apdCrimeData)
+str(apdCrimeData)
+library('Hmisc')
+describe(apdCrimeData)
+```
+
+
+
+
