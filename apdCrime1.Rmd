@@ -7,84 +7,71 @@ output:
     toc: yes
 ---
 
-This page serves as a document to describe my analysis of the Atlanta Police Department's publicly released crime data. See http://www.atlantapd.org/crimedatadownloads.aspx for details.
+Last Updated: `r Sys.Date()`
 
-# Data
+## Introduction
 
-We can read the data directly from the url.
+Let's do stuff with the Atlanta Crime Data. We'll closely follow the [codeforatlanta/apd-crime-data github](https://github.com/codeforatlanta/apd-crime-data).
+
+Namley, we'll following these steps listed in the README:
+
+- Get data
+    - Download raw data file & unzip the csv contents into your working directory
+    - Rename the csv as APD_crime.csv
+    - Save `getdata_APD_crime.R` to your working directory
+    - Run the following in the R command line:
+        - `source('./getdata_APD_crime.R')`
+        - `getdata()`
+- This will output 2 files in the working directory:
+    - COBRA_cleaned.csv: non-error rows, with extra columns X, X.1, X.2 removed
+    - COBRA_errors.csv: error rows only
+    
+The following packages must be loaded:
 
 ```{r}
-temp <- tempfile()
-download.file("http://www.atlantapd.org/pdf/crime-data-downloads/5B947EA3-05A2-45F3-AA10-1E58C5EFE20A.zip",temp)
-apdCrimeData <- read.csv(unz(temp, "COBRA020516.csv"), stringsAsFactors = FALSE)
-unlink(temp)
+library(readxl)
+library(tidyr)
+library(dplyr)
+library(leaflet)
+```
+    
+## Get Data
+
+First we'll download the zip file. Commented lines were run once.
+
+```{r}
+# temp <- tempfile(tmpdir = "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/")
+# download.file(url = "http://www.atlantapd.org/files/crimedata/COBRA110416.zip"
+              # ,destfile =  "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/COBRA110416.zip")
+apdCrimeData <- read_excel("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/COBRA110416.xlsx"
+  , sheet="Query")
+# unlink(temp)
 ```
 
-Let's look at the structure of the data set and some descriptive statistics. Looking at the structure of the data set, it looks like we have some work to do including but not limited to:
+Let's use pieces from `codeforatlanta`'s function to tidy this data:
 
-- making sure we understand what each field is (with limited data description from apd web site)
-- converting certain fields from chr to date/time
-- determine how best to handle spatial data (lon/lat, shape files, etc)
-
-```{r, message=FALSE}
-options(width=120)
-names(apdCrimeData)
-str(apdCrimeData)
-library('Hmisc')
-describe(apdCrimeData)
+```{r}
+errors_horiz_offset <- c(91350923, 91420511, 91471067, 91521689, 101540909, 
+                           101701138, 111971638, 112090917, 112411694, 113130827, 
+                           113221244, 113270554, 113531411, 113590628, 120230979, 
+                           122561142, 130101490, 141621526, 142570818, 151362710)
+errors_strange_date <- c(141260924)
+errors_all <- c(errors_horiz_offset, errors_strange_date)
+apdCrimeDataClean <- apdCrimeData %>% 
+  filter(!(offense_id %in% errors_all)) 
+apdCrimeDataErrors <- apdCrimeData %>% 
+  filter(offense_id %in% errors_all) 
 ```
 
-Let's look at each field and make sure its in the proper form.
+Now let's plot the crimes on a map in leaflet.
 
-## MI_PRINX
+```{r}
+# apdCrimeDataClean %>% 
+  
+```
 
 
-
-## offense_id
-
-## rpt_date
-
-## occur_date
-
-## occur_time
-
-## poss_date
-
-## poss_time
-
-## beat
-
-## apt_office_prefix
-
-## apt_office_num
-
-## location
-
-## MinOfucr
-
-## MinOfibr_code
-
-## dispo_code
-
-## MaxOfnum_victum
-
-## Shift
-
-## Avg.Day
-
-## loc_type
-
-## UC2.Literal
-
-## neighborhood
-
-## npu
-
-## x
-
-## y
-
-# Session Info
+## Session Info
 
 ```{r}
 sessionInfo()
