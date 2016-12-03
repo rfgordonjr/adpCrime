@@ -168,6 +168,22 @@ apdCrimeDataClean %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
+What if I add both zones and beats?
+
+```{r}
+apdCrimeDataClean %>% 
+  filter(UC2_Literal=="HOMICIDE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data=zones, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="gray") %>% 
+  addPolylines(data=zones, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="blue") %>%
+  addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="red") %>%
+  addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
+```
+
 ## Session Info
 
 ```{r}
