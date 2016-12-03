@@ -35,6 +35,7 @@ library(dplyr)
 library(leaflet)
 library(Hmisc)
 library(lubridate)
+library(maptools)
 ```
     
 ## Get Data
@@ -80,6 +81,12 @@ apdCrimeDataErrors <- apdCrimeDataTidy %>%
   filter(offense_id %in% errors_all) 
 ```
 
+## Maps
+
+Let's filter the data in different ways. `leaflet` seems unable to handle too many points on a map.
+
+## First Map
+
 Now let's plot 100 crimes on a map in leaflet.
 
 ```{r}
@@ -90,6 +97,8 @@ apdCrimeDataClean %>%
   addTiles() %>% 
   addMarkers(lng = ~x, lat = ~y, popup = ~UC2_Literal)
 ```
+
+## Homicide map
 
 How many crimes happened in 2016 alone?
 
@@ -118,6 +127,42 @@ apdCrimeDataClean %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
+## Add Shapefiles
+
+Let's download the shapefiles directly from the atlanta crime data site:
+
+```{r}
+# temp <- tempfile(tmpdir = "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/")
+# download.file(url = "http://www.atlantapd.org/pdf/crime-data-downloads/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C.zip"
+#               ,destfile =  "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C.zip")
+# unlink(temp)
+beats <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Beats-070116_region.shp")
+zones <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.shp")
+```
+
+Now we'll try to add them to our map. Let's first try adding the beats.
+
+```{r}
+apdCrimeDataClean %>% 
+  filter(UC2_Literal=="HOMICIDE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="gray") %>% 
+  addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
+```
+
+Now add zones.
+
+```{r}
+apdCrimeDataClean %>% 
+  filter(UC2_Literal=="HOMICIDE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data=zones, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="gray") %>% 
+  addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
+```
 
 ## Session Info
 
