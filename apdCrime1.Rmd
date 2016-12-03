@@ -33,6 +33,8 @@ library(readxl)
 library(tidyr)
 library(dplyr)
 library(leaflet)
+library(Hmisc)
+library(lubridate)
 ```
     
 ## Get Data
@@ -48,6 +50,21 @@ apdCrimeData <- read_excel("/Users/robertgordon/Documents/apdCrimeData/apdFirstP
 # unlink(temp)
 ```
 
+Let's check and make sure each column is what we expect it to be:
+
+```{r}
+apdCrimeData %>% str()
+names(apdCrimeData) <- gsub(" ", "_", names(apdCrimeData))
+apdCrimeDataTidy <- apdCrimeData %>% 
+  mutate(MI_PRINX = as.numeric(MI_PRINX),
+         offense_id = as.numeric(offense_id),
+         rpt_date = lubridate::as_date(rpt_date, format = "%m/%d/%Y"),
+         occur_date = lubridate::as_date(occur_date, format = "%m/%d/%Y"),
+         poss_date = lubridate::as_date(poss_date, format = "%m/%d/%Y"),
+         x = as.numeric(x),
+         y = as.numeric(y))
+```
+
 Let's use pieces from `codeforatlanta`'s function to tidy this data:
 
 ```{r}
@@ -57,17 +74,21 @@ errors_horiz_offset <- c(91350923, 91420511, 91471067, 91521689, 101540909,
                            122561142, 130101490, 141621526, 142570818, 151362710)
 errors_strange_date <- c(141260924)
 errors_all <- c(errors_horiz_offset, errors_strange_date)
-apdCrimeDataClean <- apdCrimeData %>% 
+apdCrimeDataClean <- apdCrimeDataTidy %>% 
   filter(!(offense_id %in% errors_all)) 
-apdCrimeDataErrors <- apdCrimeData %>% 
+apdCrimeDataErrors <- apdCrimeDataTidy %>% 
   filter(offense_id %in% errors_all) 
 ```
 
-Now let's plot the crimes on a map in leaflet.
+Now let's plot 100 crimes on a map in leaflet.
 
 ```{r}
-# apdCrimeDataClean %>% 
-  
+describe(apdCrimeDataClean %>% select(x, y))
+apdCrimeDataClean %>% 
+  slice(1:100) %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~x, lat = ~y, popup = ~UC2_Literal)
 ```
 
 
