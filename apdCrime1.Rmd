@@ -149,6 +149,8 @@ apdCrimeDataClean %>%
   addTiles() %>% 
   addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
               color="gray") %>% 
+  addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="black") %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
@@ -161,6 +163,8 @@ apdCrimeDataClean %>%
   addTiles() %>% 
   addPolygons(data=zones, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
               color="gray") %>% 
+  addPolylines(data=zones, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="black") %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
