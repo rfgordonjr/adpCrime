@@ -83,12 +83,39 @@ apdCrimeDataErrors <- apdCrimeDataTidy %>%
 Now let's plot 100 crimes on a map in leaflet.
 
 ```{r}
-describe(apdCrimeDataClean %>% select(x, y))
+# describe(apdCrimeDataClean %>% select(x, y))
 apdCrimeDataClean %>% 
   slice(1:100) %>% 
   leaflet() %>% 
   addTiles() %>% 
   addMarkers(lng = ~x, lat = ~y, popup = ~UC2_Literal)
+```
+
+How many crimes happened in 2016 alone?
+
+```{r}
+apdCrimeDataClean %>% 
+  filter(year(occur_date) == 2016) %>% 
+  nrow()
+```
+
+That might be too much for a single leaflet plot. What are the frequencies of all the different types of crime?
+
+```{r}
+apdCrimeDataClean %>% 
+  group_by(UC2_Literal) %>% 
+  summarise(freq = n()) %>% 
+  ungroup()
+```
+
+Let's make a map of only homicides.
+
+```{r}
+apdCrimeDataClean %>% 
+  filter(UC2_Literal=="HOMICIDE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
 
