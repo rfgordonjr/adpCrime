@@ -11,20 +11,16 @@ Last Updated: `r Sys.Date()`
 
 ## Introduction
 
-Let's do stuff with the Atlanta Crime Data. We'll closely follow the [codeforatlanta/apd-crime-data github](https://github.com/codeforatlanta/apd-crime-data).
+Let's do stuff with the Atlanta Crime Data. We'll follow recommendations from [codeforatlanta/apd-crime-data github](https://github.com/codeforatlanta/apd-crime-data).
 
-Namley, we'll following these steps listed in the README:
+Namley:
 
 - Get data
-    - Download raw data file & unzip the csv contents into your working directory
-    - Rename the csv as APD_crime.csv
-    - Save `getdata_APD_crime.R` to your working directory
-    - Run the following in the R command line:
-        - `source('./getdata_APD_crime.R')`
-        - `getdata()`
-- This will output 2 files in the working directory:
-    - COBRA_cleaned.csv: non-error rows, with extra columns X, X.1, X.2 removed
-    - COBRA_errors.csv: error rows only
+    - Download raw data file & unzip the csv contents.
+    - Follow some of the logic from `getdata_APD_crime.R`
+- This will output 2 data frames in the working directory:
+    - `apdCrimeDataClean`: non-error rows, with extra columns X, X.1, X.2 removed
+    - `apdCrimeDataErrors`: error rows only
     
 The following packages must be loaded:
 
@@ -190,6 +186,34 @@ apdCrimeDataClean %>%
   addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
               color="red") %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
+```
+
+Can we color the beats or zones by total number of homicides?
+
+```{r}
+homocidesByBeat <- apdCrimeDataClean %>% 
+  filter(UC2_Literal=="HOMICIDE") %>% 
+  group_by(beat) %>% 
+  summarise(freq = n()) %>% 
+  ungroup()
+# heatCols <- heat.colors(nrow(homocidesByBeat))[cut(sort(homocidesByBeat$freq),nrow(homocidesByBeat))]
+pal <- colorNumeric(
+  palette = "YlGnBu",
+  domain = homocidesByBeat$freq
+)
+apdCrimeDataClean %>% 
+  # filter(UC2_Literal=="HOMICIDE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="black") %>%
+  # addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
+              # fillColor=heatCols) %>% 
+  addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor = 0.5,
+              color = ~pal(homocidesByBeat$freq)) %>% 
+  addLegend("bottomright", pal = pal, values = homocidesByBeat$freq,
+            title = "Legend",
+            opacity = 1)
 ```
 
 ## Session Info
