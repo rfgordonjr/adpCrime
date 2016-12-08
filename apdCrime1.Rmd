@@ -5,9 +5,10 @@ date: '`r format(Sys.time(), "%b-%d-%Y")`'
 output: 
   html_document: 
     toc: yes
+    toc_depth: 4
 ---
 
-Last Updated: `r Sys.Date()`
+Last Updated: `r format(Sys.time(), "%b-%d-%Y")`
 
 ## Introduction
 
@@ -188,18 +189,22 @@ apdCrimeDataClean %>%
   addCircles(lng = ~x, lat = ~y, popup = ~location, col="red")
 ```
 
-Can we color the beats or zones by total number of homicides?
+## Color by Beat
+
+Can we color the beats or zones by total number of crime type?
+
+### Homicide
 
 ```{r}
-homocidesByBeat <- apdCrimeDataClean %>% 
+homicidesByBeat <- apdCrimeDataClean %>% 
   filter(UC2_Literal=="HOMICIDE") %>% 
   group_by(beat) %>% 
   summarise(freq = n()) %>% 
   ungroup()
-# heatCols <- heat.colors(nrow(homocidesByBeat))[cut(sort(homocidesByBeat$freq),nrow(homocidesByBeat))]
+# heatCols <- heat.colors(nrow(homicidesByBeat))[cut(sort(homicidesByBeat$freq),nrow(homicidesByBeat))]
 pal <- colorNumeric(
   palette = "YlGnBu",
-  domain = homocidesByBeat$freq
+  domain = homicidesByBeat$freq
 )
 apdCrimeDataClean %>% 
   # filter(UC2_Literal=="HOMICIDE") %>% 
@@ -210,8 +215,36 @@ apdCrimeDataClean %>%
   # addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
               # fillColor=heatCols) %>% 
   addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor = 0.5,
-              color = ~pal(homocidesByBeat$freq)) %>% 
-  addLegend("bottomright", pal = pal, values = homocidesByBeat$freq,
+              color = ~pal(homicidesByBeat$freq)) %>% 
+  addLegend("bottomright", pal = pal, values = homicidesByBeat$freq,
+            title = "Legend",
+            opacity = 1)
+```
+
+### Rape
+
+```{r}
+rapeByBeat <- apdCrimeDataClean %>% 
+  filter(UC2_Literal=="RAPE") %>% 
+  group_by(beat) %>% 
+  summarise(freq = n()) %>% 
+  ungroup()
+# heatCols <- heat.colors(nrow(rapeByBeat))[cut(sort(rapeByBeat$freq),nrow(rapeByBeat))]
+pal <- colorNumeric(
+  palette = "YlGnBu",
+  domain = rapeByBeat$freq
+)
+apdCrimeDataClean %>% 
+  # filter(UC2_Literal=="RAPE") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+              color="black") %>%
+  # addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor=0.5,
+              # fillColor=heatCols) %>% 
+  addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor = 0.5,
+              color = ~pal(rapeByBeat$freq)) %>% 
+  addLegend("bottomright", pal = pal, values = rapeByBeat$freq,
             title = "Legend",
             opacity = 1)
 ```
