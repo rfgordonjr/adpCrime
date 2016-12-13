@@ -203,7 +203,9 @@ homicidesByBeat <- apdCrimeDataClean %>%
   ungroup()
 # heatCols <- heat.colors(nrow(homicidesByBeat))[cut(sort(homicidesByBeat$freq),nrow(homicidesByBeat))]
 pal <- colorNumeric(
-  palette = "YlGnBu",
+  # palette = "YlGnBu",
+  # palette = "RdYlBu",
+  palette = "YlOrRd",
   domain = homicidesByBeat$freq
 )
 apdCrimeDataClean %>% 
