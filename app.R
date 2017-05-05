@@ -95,10 +95,12 @@ server <- shinyServer(function(input, output) {
        #            popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/71760161_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.837199,-84.396029,33.786637,-84.454651_rect/13_zm/'>1204 Liberty Pkwy NW, Atlanta, GA 30318</a></b>") %>% 
        # addMarkers(., lng = -84.399853, lat = 33.790102, 
        #            popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/88827595_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.84996,-84.343929,33.748822,-84.461174_rect/12_zm/'>390 17th St NW, Atlanta, GA 30363</a></b>") %>% 
-       addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
-                    color="black") %>%
-       addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor = 0.5,
-                   color = ~mypal(byBeat()$freq)) %>% 
+       # addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
+                    # color="black") %>%
+       addPolygons(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor = 0.5,
+                   color = ~mypal(byBeat()$freq),
+                   highlightOptions = highlightOptions(color = "black", weight = 2, bringToFront = TRUE)
+                   ) %>% 
        addLegend("bottomright", pal = mypal, values = byBeat()$freq,
                  title = "Legend", opacity = 1)
    })
