@@ -42,7 +42,7 @@ beats <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstPr
 zones <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.shp")
 beats_dbf <- read.dbf("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Beats-070116_region.dbf")
 zones_dbf <- read.dbf("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.dbf")
-allInfo2 <- saveRDS(file = "/Users/robertgordon/Documents/webScrape/webScrapeCondos/allInfo2.rds")
+allInfo2 <- readRDS(file = "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/allInfo2.rds")
 
 # Define UI for application that draws a histogram
 ui <- shinyUI(fluidPage(
@@ -90,10 +90,11 @@ server <- shinyServer(function(input, output) {
        # filter(UC2_Literal=="HOMICIDE") %>% 
        leaflet() %>% 
        addTiles() %>% 
-       addMarkers(., lng = -84.442567, lat = 33.818842, 
-                  popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/71760161_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.837199,-84.396029,33.786637,-84.454651_rect/13_zm/'>1204 Liberty Pkwy NW, Atlanta, GA 30318</a></b>") %>% 
-       addMarkers(., lng = -84.399853, lat = 33.790102, 
-                  popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/88827595_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.84996,-84.343929,33.748822,-84.461174_rect/12_zm/'>390 17th St NW, Atlanta, GA 30363</a></b>") %>% 
+       addMarkers(lng = allInfo2$lon, lat = allInfo2$lat, popup = allInfo2$content) %>% 
+       # addMarkers(., lng = -84.442567, lat = 33.818842, 
+       #            popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/71760161_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.837199,-84.396029,33.786637,-84.454651_rect/13_zm/'>1204 Liberty Pkwy NW, Atlanta, GA 30318</a></b>") %>% 
+       # addMarkers(., lng = -84.399853, lat = 33.790102, 
+       #            popup = "<b><a href='https://www.zillow.com/homes/for_sale/fsba_lt/mmm_pt/house,condo,townhouse_type/88827595_zpid/1-_beds/1-_baths/150000-250000_price/570-951_mp/30_days/850-_size/0-300_hoa/33.84996,-84.343929,33.748822,-84.461174_rect/12_zm/'>390 17th St NW, Atlanta, GA 30363</a></b>") %>% 
        addPolylines(data=beats, stroke=TRUE, fillOpacity = 0.5, smoothFactor=0.5,
                     color="black") %>%
        addPolygons(data=beats, stroke=FALSE, fillOpacity = 0.5, smoothFactor = 0.5,
