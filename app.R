@@ -16,6 +16,7 @@ library(Hmisc)
 library(lubridate)
 library(maptools)
 library(foreign)
+library(rgeos)
 
 apdCrimeData <- read_excel("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/COBRA110416.xlsx"
                            , sheet="Query")
@@ -23,9 +24,9 @@ names(apdCrimeData) <- gsub(" ", "_", names(apdCrimeData))
 apdCrimeDataTidy <- apdCrimeData %>% 
   mutate(MI_PRINX = as.numeric(MI_PRINX),
          offense_id = as.numeric(offense_id),
-         rpt_date = lubridate::as_date(rpt_date, format = "%m/%d/%Y"),
-         occur_date = lubridate::as_date(occur_date, format = "%m/%d/%Y"),
-         poss_date = lubridate::as_date(poss_date, format = "%m/%d/%Y"),
+         rpt_date = lubridate::as_date(rpt_date, format = "%m/%d/%Y", tz = 'UTC'),
+         occur_date = lubridate::as_date(occur_date, format = "%m/%d/%Y", tz = 'UTC'),
+         poss_date = lubridate::as_date(poss_date, format = "%m/%d/%Y", tz = 'UTC'),
          x = as.numeric(x),
          y = as.numeric(y))
 errors_horiz_offset <- c(91350923, 91420511, 91471067, 91521689, 101540909, 
