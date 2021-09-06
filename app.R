@@ -17,6 +17,7 @@ library(lubridate)
 library(maptools)
 library(foreign)
 library(rgeos)
+library(htmltools)
 
 apdCrimeData <- read_excel("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/COBRA110416.xlsx"
                            , sheet="Query")
