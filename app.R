@@ -1,13 +1,5 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(here)
 library(readxl)
 library(tidyr)
 library(dplyr)
@@ -19,8 +11,7 @@ library(foreign)
 library(rgeos)
 library(htmltools)
 
-apdCrimeData <- read_excel("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/COBRA110416.xlsx"
-                           , sheet="Query")
+apdCrimeData <- read_excel(here::here("COBRA110416.xlsx"), sheet="Query")
 names(apdCrimeData) <- gsub(" ", "_", names(apdCrimeData))
 apdCrimeDataTidy <- apdCrimeData %>% 
   mutate(MI_PRINX = as.numeric(MI_PRINX),
@@ -40,11 +31,11 @@ apdCrimeDataClean <- apdCrimeDataTidy %>%
   filter(!(offense_id %in% errors_all)) 
 apdCrimeDataErrors <- apdCrimeDataTidy %>% 
   filter(offense_id %in% errors_all) 
-beats <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Beats-070116_region.shp")
-zones <- readShapeSpatial("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.shp")
-beats_dbf <- read.dbf("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Beats-070116_region.dbf")
-zones_dbf <- read.dbf("/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.dbf")
-allInfo2 <- readRDS(file = "/Users/robertgordon/Documents/apdCrimeData/apdFirstProj/apdCrime1/allInfo2.rds")
+beats <- readShapeSpatial(here::here("1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C","APD-Beats-070116_region.shp"))
+zones <- readShapeSpatial(here::here("1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C","APD-Zones-070116_region.shp"))
+beats_dbf <- read.dbf(here::here("1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C","APD-Beats-070116_region.dbf"))
+zones_dbf <- read.dbf(here::here("1909FAB1-9E7F-4A34-8CDD-142D9DC83E7C/APD-Zones-070116_region.dbf"))
+allInfo2 <- readRDS(file = here::here("allInfo2.rds"))
 
 # Define UI for application that draws a histogram
 ui <- shinyUI(fluidPage(
