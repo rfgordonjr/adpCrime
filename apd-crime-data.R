@@ -33,6 +33,7 @@ get_apd_crime_data <- function(write_files = TRUE){
   crime_links
   
   get_crime_zipfile <- function(zip.url){
+    # try zip.url = "http://www.atlantapd.org/home/showpublisheddocument/4284"        
     td <- tempdir()
     print(paste0("Reading ", zip.url))
     tf <- tempfile(tmpdir=td, fileext=".zip") 
@@ -40,8 +41,13 @@ get_apd_crime_data <- function(write_files = TRUE){
     fname <- unzip(tf, list=TRUE)$Name[1] 
     unzip(tf, files=fname, exdir=td,overwrite=TRUE)
     fpath <- file.path(td, fname)
-    print(excel_sheets(fpath))
-    read_excel(fpath, sheet = "Query")
+    ## this line breaks b/c the file is a csv. Add logic:
+    if (grepl(pattern = '.csv',x = fpath)){
+      read.csv(fpath, stringsAsFactors = FALSE)
+    } else{
+      print(excel_sheets(fpath))
+      read_excel(fpath, sheet = "Query")
+    }
   }
   
   get_crime_nonzipfile <- function(file.url, file.name){
@@ -66,8 +72,12 @@ get_apd_crime_data <- function(write_files = TRUE){
     unlink(xlsx_filenames[i])
   }
   
+  ## create a function to make the bind_rows() work
+  
+  # lapply(X = crime_data,FUN = names)
+  
   crime_data2 <- 
-    bind_rows(crime_data) %>%
+    bind_rows(crime_data) %>% ## cant bind rows of different column lengths
     mutate(rpt_date = mdy(rpt_date), 
            occur_datetime = mdy_hms(paste(occur_date, occur_time)), occur_date = mdy(occur_date),
            poss_datetime = mdy_hms(paste(poss_date, poss_time)), poss_date = mdy(poss_date),
